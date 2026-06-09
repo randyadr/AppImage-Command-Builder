@@ -1,150 +1,125 @@
-<img width="920" height="675" alt="image" src="https://github.com/user-attachments/assets/4ba85437-c2d5-4673-b774-fddad651157f" />
+# AppImage Command Builder v4 CMake GUI
 
-# AppImage Command Builder
+A Tkinter-based Linux GUI for building AppImages from several kinds of inputs, including apt packages, Flatpak apps, local `.deb` bundles, source-code folders, archives, existing AppImages, and runnable launcher files.
 
-A simple Linux GUI tool that builds an AppImage from an `apt install` command.
+## What it does
 
-Paste a command such as:
+AppImage Command Builder helps turn install commands or local app sources into portable `.AppImage` files. It can:
+
+- Build from apt commands such as `sudo apt install kodi` or `sudo apt install filelight`
+- Build from Flatpak app IDs and commands such as `org.videolan.VLC`, `flatpak run org.videolan.VLC`, or `flatpak install flathub org.videolan.VLC`
+- Build from local `.flatpak` and `.flatpakref` files
+- Scan folders for `.deb` files, archives, AppDirs, AppImages, runnable scripts, and source projects
+- Attempt to build CMake, Meson, Make, configure-script, and prebuilt Node/Electron-style folders
+- Copy built executables into the AppDir when a CMake install target succeeds but does not install a launcher
+- Let you choose an executable override when auto-detection picks the wrong launcher
+- Let you choose a custom icon
+- Optionally launch the generated AppImage in its own terminal window
+
+## Supported inputs
+
+Paste or select any of these in the command/source box:
 
 ```bash
+sudo apt install kodi
 sudo apt install filelight
+flatpak install flathub org.videolan.VLC
+flatpak run org.videolan.VLC
+org.videolan.VLC
+/path/to/app.flatpak
+/path/to/app.flatpakref
+/path/to/package.deb
+/path/to/archive.tar.xz
+/path/to/archive.zip
+/path/to/folder
+/path/to/existing.AppImage
+/path/to/launcher.sh
 ```
-
-Then choose an AppImage name and output folder, click **Build AppImage**, and the tool will download the package, extract the `.deb` contents into an AppDir, create the AppRun and desktop files, download `appimagetool`, and build an `.AppImage`.
-
-## Features
-
-- Simple Tkinter GUI
-- Accepts normal `apt install` style commands
-- Downloads the selected package with `apt-get download`
-- Optional checkbox to include direct package dependencies
-- Automatically tries to detect the executable
-- Automatically picks an icon when one is available
-- Saves your last command, app name, output folder, dependency option, and sudo password
-- Builds x86_64 AppImages using AppImageKit's `appimagetool`
 
 ## Requirements
 
-This project is intended for Debian, Ubuntu, Linux Mint, and other `apt`-based Linux distributions.
+This is a Linux-only tool. It expects an apt-based system for apt package building, such as Debian, Ubuntu, Linux Mint, KDE neon, Pop!_OS, or a compatible distro.
 
-You need:
+Python dependencies are standard-library only. There is no `requirements.txt` needed for pip packages.
 
-- Python 3
-- Tkinter for Python
-- `apt`
-- `apt-get`
-- `apt-cache`
-- `dpkg-deb`
-- `wget`
-- `sudo`
-- `bash`
-- `awk`, `sed`, and `grep`
-- Optional: `glib-compile-schemas`, provided by `libglib2.0-bin`, for apps that include GSettings schemas
-
-## Install dependencies
-
-On Ubuntu, Debian, or Linux Mint:
+Install common system dependencies:
 
 ```bash
 sudo apt update
-sudo apt install python3 python3-tk wget dpkg apt libglib2.0-bin
+sudo apt install python3 python3-tk wget dpkg apt flatpak file tar unzip xz-utils zstd libglib2.0-bin
 ```
 
-Most systems already include `bash`, `sudo`, `awk`, `sed`, and `grep`.
+For source-code builds, install extra build tools:
 
-## Python dependencies
-
-There are no external Python package dependencies.
-
-The script only uses Python standard-library modules:
-
-- `base64`
-- `json`
-- `os`
-- `re`
-- `shlex`
-- `shutil`
-- `stat`
-- `subprocess`
-- `threading`
-- `tkinter`
-- `pathlib`
-
-Because of that, you do **not** need a `requirements.txt` file for pip packages. If you still want one, it can be empty or contain this comment:
-
-```txt
-# No pip dependencies required.
-# Uses Python standard library only.
+```bash
+sudo apt install build-essential cmake ninja-build meson pkg-config git
 ```
+
+Optional terminal launch support:
+
+```bash
+sudo apt install konsole
+```
+
+Other supported terminal emulators include `gnome-terminal`, `xfce4-terminal`, `mate-terminal`, `lxterminal`, `kitty`, `alacritty`, and `xterm`.
+
+See [`DEPENDENCIES.md`](DEPENDENCIES.md) for the full dependency list.
 
 ## How to run
 
-Clone the repository:
+Clone or download the project, then run:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/appimage-command-builder.git
-cd appimage-command-builder
+python3 "AppImage Command Builder v4 CMAKE GUI.py"
 ```
 
-Run the app:
+## Basic usage
 
-```bash
-python3 "AppImage Command Builder.py"
-```
+1. Enter an apt command, Flatpak app ID, local file, archive, or folder path.
+2. Enter the AppImage name you want.
+3. Choose a build/output folder.
+4. Use **Executable override** if the app builds but launches the wrong executable.
+5. Use **Icon override** if you want a custom `.png`, `.svg`, or `.xpm` icon.
+6. Click **Build AppImage**.
 
-Or rename the file to a simpler command-friendly name:
-
-```bash
-mv "AppImage Command Builder.py" appimage_command_builder.py
-python3 appimage_command_builder.py
-```
-
-## How to use
-
-1. Open the program.
-2. Paste an install command, for example:
-
-   ```bash
-   sudo apt install filelight
-   ```
-
-3. Enter an AppImage name.
-4. Choose a build/output folder.
-5. Optional: enable **Add direct dependencies** if the AppImage does not run correctly with only the main package.
-6. Optional: click **Set sudo password** if you want the tool to run `sudo apt update` automatically.
-7. Click **Build AppImage**.
-
-When the build finishes, the AppImage will be created inside a folder named like this:
+The output is created inside a folder named like:
 
 ```text
-YourAppName-appimage-build/
+<AppName>-appimage-build/<AppName>-x86_64.AppImage
 ```
 
-The final file will look like:
+## Notes about Flatpak builds
 
-```text
-YourAppName-x86_64.AppImage
-```
+Flatpaks are designed to run inside Flatpak's sandbox/runtime system. This project makes a best-effort AppImage by copying the Flatpak app files and runtime files into an AppDir and setting runtime paths manually.
 
-## Notes and limitations
+Simple GTK, Qt, and Electron apps may work. Apps that require portals, sandbox permissions, D-Bus services, GPU extensions, or Flatpak extension points may need manual fixes.
 
-- This tool is intentionally simple.
-- By default, it downloads only the package you typed.
-- The dependency option only adds direct dependencies, not a full recursive dependency tree.
-- Some applications may need extra libraries, plugins, environment variables, or manual fixes before they work well as an AppImage.
-- Packages that do not install a GUI executable may fail automatic executable detection.
-- This tool is designed for x86_64 systems.
-- The generated AppImage is not guaranteed to be portable across every Linux distribution.
+## Notes about source builds
 
-## Security note
+When a source folder is selected, the builder looks for common build markers such as:
 
-The app can save your sudo password in:
+- `CMakeLists.txt`
+- `meson.build`
+- `configure`
+- `Makefile`
+- `package.json`
+
+For CMake projects, the builder uses a temporary space-free build directory and tries to install into the AppDir. If install succeeds but no launcher appears, it copies built executables and libraries into the AppDir as a fallback.
+
+## Configuration
+
+Settings are saved here:
 
 ```text
 ~/.config/appimage-command-builder/config.json
 ```
 
+This may include the saved sudo password if you use the built-in sudo password button. Be careful when sharing your config file.
 
-Then add a `LICENSE` file to your repository.
+## Security warning
 
+Only build apps from sources you trust. This tool can run package managers, build tools, scripts, and selected local executables. Review unknown source folders and install commands before building.
 
+## License
+
+Add your preferred license here, such as MIT, GPL-3.0, or another license before publishing publicly.
