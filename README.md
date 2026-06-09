@@ -1,3 +1,4 @@
+<img width="1042" height="757" alt="Screenshot_20260609_123342" src="https://github.com/user-attachments/assets/dd61a510-97c5-4b33-9afc-46c3e8a8e93b" />
 # AppImage Command Builder v4 CMake GUI
 
 A Tkinter-based Linux GUI for building AppImages from several kinds of inputs, including apt packages, Flatpak apps, local `.deb` bundles, source-code folders, archives, existing AppImages, and runnable launcher files.
