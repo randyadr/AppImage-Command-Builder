@@ -121,6 +121,3 @@ This may include the saved sudo password if you use the built-in sudo password b
 
 Only build apps from sources you trust. This tool can run package managers, build tools, scripts, and selected local executables. Review unknown source folders and install commands before building.
 
-## License
-
-Add your preferred license here, such as MIT, GPL-3.0, or another license before publishing publicly.
