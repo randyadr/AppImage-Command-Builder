@@ -23,14 +23,6 @@ Then choose an AppImage name and output folder, click **Build AppImage**, and th
 - Saves your last command, app name, output folder, dependency option, and sudo password
 - Builds x86_64 AppImages using AppImageKit's `appimagetool`
 
-## Screenshot
-
-Add a screenshot here after you upload one to your repository.
-
-```markdown
-![AppImage Command Builder screenshot](screenshot.png)
-```
-
 ## Requirements
 
 This project is intended for Debian, Ubuntu, Linux Mint, and other `apt`-based Linux distributions.
