@@ -146,15 +146,6 @@ The app can save your sudo password in:
 
 The script tries to restrict that config file to user-only permissions, but storing a sudo password on disk is still risky. For public GitHub releases, consider warning users clearly or changing the script to ask for the password each time instead of saving it.
 
-## License
-
-Choose a license before publishing. MIT is a common option for small open-source tools.
-
-Example:
-
-```text
-MIT License
-```
 
 Then add a `LICENSE` file to your repository.
 
